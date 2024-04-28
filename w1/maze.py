@@ -83,17 +83,12 @@ class Maze:
             self.read_floor(f)
 
     @staticmethod
-    def get_heuristic(
-        coords: tuple[int, int, int], goal: tuple[int, int, int]
-    ) -> float:
-        if goal is None:
-            return 0
-
-        total = 0
-        for i in range(3):
-            total += (goal[i] - coords[i]) ** 2
-
-        return total**0.5
+    def get_heuristic(row):
+        string = (str(row[1]) + str(row[2])).strip()
+        try:
+            return int(string)
+        except ValueError:
+            return None
 
     @staticmethod
     def check_connection(room, cell, direction):
@@ -134,6 +129,7 @@ class Maze:
                 start = idx * 8
                 # get part of input for one room
                 r = [row[start : start + 9] for row in lines]
+                room.heuristicValue = self.get_heuristic(r[1])
                 self.check_connection(room, r[2][2], "UP")
                 self.check_connection(room, r[2][6], "DOWN")
                 self.check_connection(room, r[0][4], "NORTH")
@@ -149,18 +145,12 @@ class Maze:
             # last line is first line for next row
             lines[0] = lines[4]
 
-        for c1 in self.rooms:
-            for c2 in c1:
-                for r in c2:
-                    if r is not None:
-                        r.heuristicValue = self.get_heuristic(r.coords, self.goal)
-
     def get_room_line_one(self, room, print_coords, direction):
         # value_when_true if condition else value_when_false
         c = " "
-        if self.get_dir(room, "from", direction) == "NORTH":
+        if self.get_dir(room, "from", direction) is "NORTH":
             c = "v"
-        if self.get_dir(room, "to", direction) == "NORTH":
+        if self.get_dir(room, "to", direction) is "NORTH":
             c = "^"
 
         return ("|--|%s|--" % c) if room.can_move_to("NORTH") else "|-------"
@@ -168,17 +158,17 @@ class Maze:
     def get_room_line_two(self, room, print_coords, direction):
         west = "-" if room.can_move_to("WEST") else "|"
         c = " "
-        if self.get_dir(room, "from", direction) == "NORTH":
+        if self.get_dir(room, "from", direction) is "NORTH":
             c = "v"
-        if self.get_dir(room, "to", direction) == "NORTH":
+        if self.get_dir(room, "to", direction) is "NORTH":
             c = "^"
         heuristic = "  "
         if room.get_heuristic_value() is not None:
-            heuristic = "{:.1f}".format(room.get_heuristic_value())
+            heuristic = "{:>2}".format(room.get_heuristic_value())
         cost = "   "
         coords = room.get_coords()
         if coords in direction and "cost" in direction[coords]:
-            cost = "{:3}".format(direction[room.get_coords()]["cost"])
+            cost = "{:>3}".format(direction[room.get_coords()]["cost"])
         return "%s%s %s%s" % (west, heuristic, c, cost)
 
     def get_middle_char(self, room, direction):
@@ -186,13 +176,13 @@ class Maze:
             return "X"
         if room.is_goal():
             return "G"
-        if self.get_dir(room, "to", direction) == "UP":
+        if self.get_dir(room, "to", direction) is "UP":
             return "o"
-        if self.get_dir(room, "to", direction) == "DOWN":
+        if self.get_dir(room, "to", direction) is "DOWN":
             return "o"
-        if self.get_dir(room, "from", direction) == "UP":
+        if self.get_dir(room, "from", direction) is "UP":
             return "o"
-        if self.get_dir(room, "from", direction) == "DOWN":
+        if self.get_dir(room, "from", direction) is "DOWN":
             return "o"
         return " "
 
@@ -202,13 +192,13 @@ class Maze:
         west = " " if room.can_move_to("WEST") else "|"
         from_to_west = " "
         from_to_east = " "
-        if self.get_dir(room, "from", direction) == "WEST":
+        if self.get_dir(room, "from", direction) is "WEST":
             from_to_west = ">"
-        if self.get_dir(room, "to", direction) == "WEST":
+        if self.get_dir(room, "to", direction) is "WEST":
             from_to_west = "<"
-        if self.get_dir(room, "from", direction) == "EAST":
+        if self.get_dir(room, "from", direction) is "EAST":
             from_to_east = "<"
-        if self.get_dir(room, "to", direction) == "EAST":
+        if self.get_dir(room, "to", direction) is "EAST":
             from_to_east = ">"
 
         mid = self.get_middle_char(room, direction)
@@ -228,9 +218,9 @@ class Maze:
         if print_coords:
             return "%s %s %s %s " % ((west,) + room.get_coords())
         c = " "
-        if self.get_dir(room, "from", direction) == "SOUTH":
+        if self.get_dir(room, "from", direction) is "SOUTH":
             c = "^"
-        if self.get_dir(room, "to", direction) == "SOUTH":
+        if self.get_dir(room, "to", direction) is "SOUTH":
             c = "v"
         return "%s   %s   " % (west, c)
 
@@ -238,7 +228,7 @@ class Maze:
         direction = {}
         while state is not None:
             parent = state.get_parent()
-            if parent == None:
+            if parent is None:
                 break
             coords = state.get_room().get_coords()
             if coords not in direction:
