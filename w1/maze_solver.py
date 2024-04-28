@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from ASTAR import astar
 from GREEDY import greedy
+from IDS import ids
 from fringe import Fringe
 from DBFS import dbfs
 from UCS import ucs
@@ -24,6 +25,8 @@ def solve_maze_general(maze, algorithm):
         greedy(maze, Fringe("STACK"))
     elif algorithm == "ASTAR":
         astar(maze, Fringe("PRIORITY"))
+    elif algorithm == "IDS":
+        ids(maze)
     else:
         print("Algorithm not found/implemented, exit")
         return
