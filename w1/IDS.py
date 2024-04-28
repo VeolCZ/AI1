@@ -5,9 +5,11 @@ from state import State
 def ids(maze):
     depth = 3
     while True:
-        res = ds(maze, depth)
-        if res is not None and res is not False:
-            fringe, state = res
+        t, fringe, state = ds(maze, depth)
+        if t is None:
+            depth += 3
+
+        elif t:
             print("solved")
             fringe.print_stats()
             state.print_path()
@@ -16,12 +18,10 @@ def ids(maze):
             maze.print_maze_with_path(state)
             return
 
-        if res is False:
+        else:
             print("not solved")
             fringe.print_stats()
             return
-
-        depth += 3
 
 
 def ds(maze, max_depth):
@@ -38,7 +38,7 @@ def ds(maze, max_depth):
         seen.add(room)
 
         if room.is_goal():
-            return fringe, state
+            return True, fringe, state
 
         for d in room.get_connections():
             new_room, cost = room.make_move(d, state.get_cost())
@@ -49,6 +49,6 @@ def ds(maze, max_depth):
         depth += 1
 
         if depth > max_depth:
-            return None
+            return None, None, None
 
-    return False
+    return False, fringe, state
