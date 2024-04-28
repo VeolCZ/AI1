@@ -23,7 +23,9 @@ def greedy(maze, fringe):
             return True
 
         for d in room.get_connections():
-            neighbours.append(room.make_move(d, state.get_cost()))
+            neighbours.append(
+                room.make_move(d, state.get_cost() + state.room.heuristicValue)
+            )
 
         neighbours.sort(key=lambda a: a[0].heuristicValue)
         for _ in range(len(neighbours)):

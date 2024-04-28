@@ -37,7 +37,7 @@ def astar(maze, fringe):
                     new_cost = float("inf")
                     new_room, cost = room.make_move(d, state.get_cost())
                     if new_room == _state.get_room():
-                        new_cost = cost + state.cost + new_room.heuristicValue
+                        new_cost = cost + state.get_cost() + new_room.heuristicValue
                         if new_cost < _state.cost:
                             _state.cost = new_cost
                         break
