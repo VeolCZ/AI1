@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from GREEDY import greedy
 from fringe import Fringe
 from DBFS import dbfs
 from UCS import ucs
@@ -18,6 +19,8 @@ def solve_maze_general(maze, algorithm):
         dbfs(maze, Fringe("STACK"))
     elif algorithm == "UCS":
         ucs(maze, Fringe("PRIORITY"))
+    elif algorithm == "GREEDY":
+        greedy(maze, Fringe("STACK"))
     else:
         print("Algorithm not found/implemented, exit")
         return
