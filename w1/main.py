@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import sys
-from maze_solver import *
 from maze import Maze
+from maze_solver import solve_maze_general
 
 run_default_algorithm = False
 

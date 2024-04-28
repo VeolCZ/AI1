@@ -86,7 +86,7 @@ class Maze:
     def get_heuristic(
         coords: tuple[int, int, int], goal: tuple[int, int, int]
     ) -> float:
-        if goal == None:
+        if goal is None:
             return 0
 
         total = 0
@@ -153,7 +153,7 @@ class Maze:
             for c2 in c1:
                 for r in c2:
                     if r is not None:
-                        room.heuristicValue = self.get_heuristic(r.coords, self.goal)
+                        r.heuristicValue = self.get_heuristic(r.coords, self.goal)
 
     def get_room_line_one(self, room, print_coords, direction):
         # value_when_true if condition else value_when_false
@@ -174,11 +174,11 @@ class Maze:
             c = "^"
         heuristic = "  "
         if room.get_heuristic_value() is not None:
-            heuristic = "{:>2}".format(room.get_heuristic_value())
+            heuristic = "{:.1f}".format(room.get_heuristic_value())
         cost = "   "
         coords = room.get_coords()
         if coords in direction and "cost" in direction[coords]:
-            cost = "{:>3}".format(direction[room.get_coords()]["cost"])
+            cost = "{:3}".format(direction[room.get_coords()]["cost"])
         return "%s%s %s%s" % (west, heuristic, c, cost)
 
     def get_middle_char(self, room, direction):
