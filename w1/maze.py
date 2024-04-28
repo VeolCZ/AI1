@@ -74,19 +74,23 @@ class Maze:
         self.width = int(f.readline().split("Width:")[1].strip())
         self.height = int(f.readline().split("Height:")[1].strip())
         self.floors = int(f.readline().split("Floors:")[1].strip())
-        self.rooms = [[[None for _ in range(self.floors)]
-                       for _ in range(self.height)] for _ in range(self.width)]
+        self.rooms = [
+            [[None for _ in range(self.floors)] for _ in range(self.height)]
+            for _ in range(self.width)
+        ]
 
         for idx in range(self.floors):
             self.read_floor(f)
 
     @staticmethod
-    def get_heuristic(row):
-        string = (str(row[1]) + str(row[2])).strip()
-        try:
-            return int(string)
-        except ValueError:
-            return None
+    def get_heuristic(
+        coords: tuple[int, int, int], goal: tuple[int, int, int]
+    ) -> float:
+        total = 0
+        for i in range(3):
+            total += (goal[i] - coords[i]) ** 2
+
+        return total**0.5
 
     @staticmethod
     def check_connection(room, cell, direction):
@@ -126,8 +130,7 @@ class Maze:
                 self.rooms[idx][idy][floor] = room
                 start = idx * 8
                 # get part of input for one room
-                r = [row[start:start + 9] for row in lines]
-                room.heuristicValue = self.get_heuristic(r[1])
+                r = [row[start : start + 9] for row in lines]
                 self.check_connection(room, r[2][2], "UP")
                 self.check_connection(room, r[2][6], "DOWN")
                 self.check_connection(room, r[0][4], "NORTH")
@@ -140,15 +143,21 @@ class Maze:
                 if "X" in r[2]:
                     self.start = (idx, idy, floor)
                     room.set_start()
+
+        for c in self.rooms:
+            for c2 in c:
+                for r in c2:
+                    if r is not None:
+                        r.heuristicValue = self.get_heuristic(r.get_coords(), self.goal)
             # last line is first line for next row
             lines[0] = lines[4]
 
     def get_room_line_one(self, room, print_coords, direction):
         # value_when_true if condition else value_when_false
         c = " "
-        if self.get_dir(room, 'from', direction) is "NORTH":
+        if self.get_dir(room, "from", direction) == "NORTH":
             c = "v"
-        if self.get_dir(room, 'to', direction) is "NORTH":
+        if self.get_dir(room, "to", direction) == "NORTH":
             c = "^"
 
         return ("|--|%s|--" % c) if room.can_move_to("NORTH") else "|-------"
@@ -156,17 +165,17 @@ class Maze:
     def get_room_line_two(self, room, print_coords, direction):
         west = "-" if room.can_move_to("WEST") else "|"
         c = " "
-        if self.get_dir(room, 'from', direction) is "NORTH":
+        if self.get_dir(room, "from", direction) == "NORTH":
             c = "v"
-        if self.get_dir(room, 'to', direction) is "NORTH":
+        if self.get_dir(room, "to", direction) == "NORTH":
             c = "^"
         heuristic = "  "
         if room.get_heuristic_value() is not None:
-            heuristic = '{:>2}'.format(room.get_heuristic_value())
+            heuristic = "{:>2}".format(room.get_heuristic_value())
         cost = "   "
         coords = room.get_coords()
-        if coords in direction and 'cost' in direction[coords]:
-            cost = '{:>3}'.format(direction[room.get_coords()]['cost'])
+        if coords in direction and "cost" in direction[coords]:
+            cost = "{:>3}".format(direction[room.get_coords()]["cost"])
         return "%s%s %s%s" % (west, heuristic, c, cost)
 
     def get_middle_char(self, room, direction):
@@ -174,13 +183,13 @@ class Maze:
             return "X"
         if room.is_goal():
             return "G"
-        if self.get_dir(room, 'to', direction) is "UP":
+        if self.get_dir(room, "to", direction) == "UP":
             return "o"
-        if self.get_dir(room, 'to', direction) is "DOWN":
+        if self.get_dir(room, "to", direction) == "DOWN":
             return "o"
-        if self.get_dir(room, 'from', direction) is "UP":
+        if self.get_dir(room, "from", direction) == "UP":
             return "o"
-        if self.get_dir(room, 'from', direction) is "DOWN":
+        if self.get_dir(room, "from", direction) == "DOWN":
             return "o"
         return " "
 
@@ -190,27 +199,35 @@ class Maze:
         west = " " if room.can_move_to("WEST") else "|"
         from_to_west = " "
         from_to_east = " "
-        if self.get_dir(room, 'from', direction) is "WEST":
+        if self.get_dir(room, "from", direction) == "WEST":
             from_to_west = ">"
-        if self.get_dir(room, 'to', direction) is "WEST":
+        if self.get_dir(room, "to", direction) == "WEST":
             from_to_west = "<"
-        if self.get_dir(room, 'from', direction) is "EAST":
+        if self.get_dir(room, "from", direction) == "EAST":
             from_to_east = "<"
-        if self.get_dir(room, 'to', direction) is "EAST":
+        if self.get_dir(room, "to", direction) == "EAST":
             from_to_east = ">"
 
         mid = self.get_middle_char(room, direction)
-        return ("%s%s%s%s%s%s%s%s" %
-                (west, from_to_west, up, from_to_west, mid, from_to_east, down, from_to_east))
+        return "%s%s%s%s%s%s%s%s" % (
+            west,
+            from_to_west,
+            up,
+            from_to_west,
+            mid,
+            from_to_east,
+            down,
+            from_to_east,
+        )
 
     def get_room_line_four(self, room, print_coords, direction):
         west = "-" if room.can_move_to("WEST") else "|"
         if print_coords:
             return "%s %s %s %s " % ((west,) + room.get_coords())
         c = " "
-        if self.get_dir(room, 'from', direction) is "SOUTH":
+        if self.get_dir(room, "from", direction) == "SOUTH":
             c = "^"
-        if self.get_dir(room, 'to', direction) is "SOUTH":
+        if self.get_dir(room, "to", direction) == "SOUTH":
             c = "v"
         return "%s   %s   " % (west, c)
 
@@ -223,14 +240,16 @@ class Maze:
             coords = state.get_room().get_coords()
             if coords not in direction:
                 direction[coords] = {}
-            direction[coords]['from'] = \
-                self.get_move_dir(coords, parent.get_room().get_coords())
-            direction[coords]['cost'] = state.get_cost()
+            direction[coords]["from"] = self.get_move_dir(
+                coords, parent.get_room().get_coords()
+            )
+            direction[coords]["cost"] = state.get_cost()
 
             if parent.get_room().get_coords() not in direction:
                 direction[parent.get_room().get_coords()] = {}
-            direction[parent.get_room().get_coords()]['to'] = \
-                self.get_move_dir(parent.get_room().get_coords(), coords)
+            direction[parent.get_room().get_coords()]["to"] = self.get_move_dir(
+                parent.get_room().get_coords(), coords
+            )
 
             state = parent
         return direction
@@ -243,9 +262,15 @@ class Maze:
             for idx in range(self.width):
                 room = self.rooms[idx][idy][idz]
                 lines[y_line] += self.get_room_line_one(room, print_coords, direction)
-                lines[y_line + 1] += self.get_room_line_two(room, print_coords, direction)
-                lines[y_line + 2] += self.get_room_line_three(room, print_coords, direction)
-                lines[y_line + 3] += self.get_room_line_four(room, print_coords, direction)
+                lines[y_line + 1] += self.get_room_line_two(
+                    room, print_coords, direction
+                )
+                lines[y_line + 2] += self.get_room_line_three(
+                    room, print_coords, direction
+                )
+                lines[y_line + 3] += self.get_room_line_four(
+                    room, print_coords, direction
+                )
 
             for i in range(4):
                 lines[y_line + i] += "|"
@@ -261,8 +286,10 @@ class Maze:
 
     def print_maze_with_path(self, state, print_coords=False):
         d = self.get_directions(state)
-        print("Width: %d \nHeight: %d \nFloors: %d" %
-              (self.width, self.height, self.floors))
+        print(
+            "Width: %d \nHeight: %d \nFloors: %d"
+            % (self.width, self.height, self.floors)
+        )
 
         # loop descending through all floors
         for f in range(self.floors - 1, -1, -1):
