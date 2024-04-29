@@ -1,3 +1,4 @@
+from DBFS import resolve_goal_found
 from state import State
 
 
@@ -15,13 +16,7 @@ def astar(maze, fringe):
         neighbours: list[int] = []
 
         if room.is_goal():
-            print("solved")
-            fringe.print_stats()
-            state.print_path()
-            state.print_actions()
-            print()
-            maze.print_maze_with_path(state)
-            return True
+            return resolve_goal_found(maze, fringe, state)
 
         for d in room.get_connections():
             new_room, cost = room.make_move(d, state.get_cost())

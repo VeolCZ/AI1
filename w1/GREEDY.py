@@ -1,3 +1,4 @@
+from DBFS import resolve_goal_found
 from state import State
 
 
@@ -14,25 +15,16 @@ def greedy(maze, fringe):
         neighbours: list[int] = []
 
         if room.is_goal():
-            print("solved")
-            fringe.print_stats()
-            state.print_path()
-            state.print_actions()
-            print()
-            maze.print_maze_with_path(state)
-            return True
+            return resolve_goal_found(maze, fringe, state)
 
         for d in room.get_connections():
-            neighbours.append(
-                room.make_move(d, state.get_cost() + state.room.heuristicValue)
-            )
-
+            neighbours.append(room.make_move(d, state.get_cost()))
         neighbours.sort(key=lambda a: a[0].heuristicValue)
+
         for _ in range(len(neighbours)):
             new_room, cost = neighbours.pop()
-            neighbour = State(new_room, state, cost + new_room.heuristicValue)
-            if neighbour not in seen:
-                fringe.push(neighbour)
+            if new_room not in seen:
+                fringe.push(State(new_room, state, cost))
                 seen.add(new_room)
 
     print("not solved")
