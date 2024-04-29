@@ -1,10 +1,20 @@
 from state import State
 
 
-def dbfs(maze, fringe):
+def dbfs(maze, fringe) -> bool:
+    """Implements the DFS and BFS search algorithms
+
+    Args:
+        maze (Maze): A maze including all the paths
+        fringe (Fringe): A Fringe, more specifically standart Queue
+
+    Returns:
+        bool: Whether or not a path was found
+    """
+
     seen = set()
     room = maze.get_room(*maze.get_start())
-    state = State(room, None)
+    state = State(room, None, 0 + room.heuristicValue)
     fringe.push(state)
     seen.add(room)
 
@@ -18,7 +28,7 @@ def dbfs(maze, fringe):
         for d in room.get_connections():
             new_room, cost = room.make_move(d, state.get_cost())
             if new_room not in seen:
-                new_state = State(new_room, state, cost)
+                new_state = State(new_room, state, cost + new_room.heuristicValue)
                 fringe.push(new_state)
                 seen.add(new_room)
 
@@ -28,6 +38,16 @@ def dbfs(maze, fringe):
 
 
 def resolve_goal_found(maze, fringe, state):
+    """Prints the summary of the best path
+
+    Args:
+        maze (Maze): A maze including all the paths
+        fringe (Fringe): Any Fringe
+        state (State): The latest explored state
+
+    Returns:
+        bool: True
+    """
     print("solved")
     fringe.print_stats()
     state.print_path()

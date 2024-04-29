@@ -2,7 +2,17 @@ from DBFS import resolve_goal_found
 from state import State
 
 
-def astar(maze, fringe):
+def astar(maze, fringe) -> bool:
+    """Implements the A* search algorithm
+
+    Args:
+        maze (Maze): A maze including all the paths
+        fringe (Fringe): A Fringe, more specifically heap
+
+    Returns:
+        bool: Whether or not a path was found
+    """
+
     room = maze.get_room(*maze.get_start())
     state = State(room, None, 0 + room.heuristicValue)
     fringe.push(state)

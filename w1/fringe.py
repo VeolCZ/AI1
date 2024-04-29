@@ -8,7 +8,7 @@ from heap import Node
 class Fringe(object):
     """wrapper for queue lib from python to keep track of some statistics"""
 
-    # ### DO NOT CHANGE __MAX_FRINGE_SIZE ###
+    ### DO NOT CHANGE __MAX_FRINGE_SIZE ###
     __MAX_FRINGE_SIZE = 50000
     __fringe = None
     __insertions = 0
