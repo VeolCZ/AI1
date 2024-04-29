@@ -1,3 +1,4 @@
+from DBFS import resolve_goal_found
 from fringe import Fringe
 from state import State
 
@@ -10,18 +11,12 @@ def ids(maze):
             depth += 3
 
         elif t:
-            print("solved")
-            fringe.print_stats()
-            state.print_path()
-            state.print_actions()
-            print()
-            maze.print_maze_with_path(state)
-            return
+            return resolve_goal_found(maze, fringe, state)
 
         else:
             print("not solved")
             fringe.print_stats()
-            return
+            return False
 
 
 def ds(maze, max_depth):
@@ -31,11 +26,11 @@ def ds(maze, max_depth):
     room = maze.get_room(*maze.get_start())
     state = State(room, None)
     fringe.push(state)
+    seen.add(room)
 
     while not fringe.is_empty():
         state = fringe.pop()
         room = state.get_room()
-        seen.add(room)
 
         if room.is_goal():
             return True, fringe, state

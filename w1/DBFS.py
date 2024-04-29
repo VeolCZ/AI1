@@ -6,11 +6,11 @@ def dbfs(maze, fringe):
     room = maze.get_room(*maze.get_start())
     state = State(room, None)
     fringe.push(state)
+    seen.add(room)
 
     while not fringe.is_empty():
         state = fringe.pop()
         room = state.get_room()
-        seen.add(room)
 
         if room.is_goal():
             return resolve_goal_found(maze, fringe, state)

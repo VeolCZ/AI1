@@ -13,7 +13,7 @@
             "stopOnEntry": true,
             "justMyCode": false,
             "purpose": ["debug-test"],
-            "args": ["GREEDY", "two_paths.maze"]
+            "args": ["ASTAR", "greedy_astar.maze"]
         }
     ]
 }

@@ -7,18 +7,18 @@ def greedy(maze, fringe):
     room = maze.get_room(*maze.get_start())
     state = State(room, None)
     fringe.push(state)
+    seen.add(room)
 
     while not fringe.is_empty():
         state = fringe.pop()
         room = state.get_room()
-        seen.add(room)
-        neighbours: list[int] = []
+        neighbours = []
 
         if room.is_goal():
             return resolve_goal_found(maze, fringe, state)
 
-        for d in room.get_connections():
-            neighbours.append(room.make_move(d, state.get_cost()))
+        for c in room.get_connections():
+            neighbours.append(room.make_move(c, state.get_cost()))
         neighbours.sort(key=lambda a: a[0].heuristicValue)
 
         for _ in range(len(neighbours)):
