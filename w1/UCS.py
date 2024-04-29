@@ -1,54 +1,31 @@
+from DBFS import resolve_goal_found
 from state import State
 
 
 def ucs(maze, fringe):
-    seen = set()
     room = maze.get_room(*maze.get_start())
-    state = State(room, None)
+    state = State(room, None, 0)
     fringe.push(state)
+    seen = dict()
+    seen[room] = state
 
     while not fringe.is_empty():
         state = fringe.pop()
         room = state.get_room()
-        seen.add(room)
-        cringe = []
-        neighbours: list[int] = []
 
         if room.is_goal():
-            print("solved")
-            fringe.print_stats()
-            state.print_path()
-            state.print_actions()
-            print()
-            maze.print_maze_with_path(state)
-            return True
+            return resolve_goal_found(maze, fringe, state)
 
-        for d in room.get_connections():
-            new_room, cost = room.make_move(d, state.get_cost())
-            neighbours.append(hash(new_room))
-
-        while not fringe.is_empty():
-            _state = fringe.pop()
-            cringe.append(_state)
-
-        for _state in cringe:
-            if hash(_state.get_room()) in neighbours:
-                for d in room.get_connections():
-                    new_cost = float("inf")
-                    new_room, cost = room.make_move(d, state.get_cost())
-                    if new_room == _state.get_room():
-                        new_cost = cost + state.cost
-                        if new_cost < _state.cost:
-                            _state.cost = new_cost
-                        break
-            fringe.push(_state)
-
-        for d in room.get_connections():
-            new_room, cost = room.make_move(d, state.get_cost())
+        for c in room.get_connections():
+            new_room, cost = room.make_move(c, state.get_cost())
             if new_room not in seen:
                 new_state = State(new_room, state, cost)
                 fringe.push(new_state)
-                seen.add(new_room)
+                seen[new_room] = new_state
+            else:
+                new_cost = cost + state.get_cost()
+                if new_cost < seen[new_room].get_cost():
+                    seen[new_room] = State(new_room, state, new_cost)
 
     print("not solved")
     fringe.print_stats()

@@ -16,15 +16,15 @@ def solve_maze_general(maze, algorithm):
     """
     # select the right fringe for each algorithm
     if algorithm == "BFS":
-        dbfs(maze, Fringe("FIFO"))
+        dbfs(maze, Fringe("QUEUE"))
     elif algorithm == "DFS":
         dbfs(maze, Fringe("STACK"))
     elif algorithm == "UCS":
-        ucs(maze, Fringe("PRIORITY"))
+        ucs(maze, Fringe("HEAP"))
     elif algorithm == "GREEDY":
         greedy(maze, Fringe("STACK"))
     elif algorithm == "ASTAR":
-        astar(maze, Fringe("PRIORITY"))
+        astar(maze, Fringe("HEAP"))
     elif algorithm == "IDS":
         ids(maze)
     else:

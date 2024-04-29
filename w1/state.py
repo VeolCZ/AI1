@@ -17,7 +17,7 @@ class State:
         :param other: State to compare this state with
         :return: True is this states priority is lower than the priority of other state. Otherwise False
         """
-        return self.priority >= other.priority
+        return self.priority < other.priority
 
     def get_room(self):
         """

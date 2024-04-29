@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import queue
 import sys
+from fringe_heap import FringeHeap
+from heap import Node
 
 
 class Fringe(object):
@@ -19,19 +21,27 @@ class Fringe(object):
         :param fringe_type: The desired type for the queue
         :return: A queue of type fringe_type
         """
-        if fringe_type is "STACK":
+        if fringe_type == "STACK":
             return queue.LifoQueue(self.__MAX_FRINGE_SIZE)
 
-        if fringe_type is "FIFO":
+        if fringe_type == "QUEUE":
             return queue.Queue(self.__MAX_FRINGE_SIZE)
 
-        if fringe_type is "PRIORITY":
+        if fringe_type == "PRIORITY":
             return queue.PriorityQueue(self.__MAX_FRINGE_SIZE)
 
-    def __init__(self, fringe_type='FIFO'):
+        if fringe_type == "HEAP":
+            return FringeHeap(self.__MAX_FRINGE_SIZE)
+
+    def __init__(self, fringe_type="QUEUE"):
         self.__type = fringe_type
         super(Fringe, self).__init__()
         self.__fringe = self.create_fringe(self.__type)
+
+    def update_priority(self, item: Node | int, priority: float) -> None:
+        if self.__fringe is None:
+            raise Exception("Undefined fringe")
+        self.__fringe.update_priority(item, priority)
 
     def push(self, item):
         """
@@ -40,8 +50,11 @@ class Fringe(object):
         """
         # If the fringe is full, print an error and exit
         if self.__fringe.full():
-            print("Error: trying to apply push on an fringe that already contains MAX ("
-                  + str(self.__MAX_FRINGE_SIZE) + ") elements")
+            print(
+                "Error: trying to apply push on an fringe that already contains MAX ("
+                + str(self.__MAX_FRINGE_SIZE)
+                + ") elements"
+            )
             self.print_stats()
             sys.exit(1)
         self.__fringe.put(item, block=False)
@@ -78,7 +91,7 @@ class Fringe(object):
         return self.__deletions
 
     def print_stats(self):
-        """ Prints the statistics of the fringe """
+        """Prints the statistics of the fringe"""
         print("#### fringe statistics:")
         print("size: {0:>15d}".format(self.__fringe.qsize()))
         print("maximum size: {0:>7d}".format(self.__maxSize))
