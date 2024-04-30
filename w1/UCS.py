@@ -3,7 +3,7 @@ from state import State
 
 
 def ucs(maze, fringe) -> bool:
-    """Implements the A* search algorithm
+    """Implements the universal cost search algorithm
 
     Args:
         maze (Maze): A maze including all the paths

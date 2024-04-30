@@ -22,7 +22,7 @@ def solve_maze_general(maze, algorithm):
     elif algorithm == "UCS":
         ucs(maze, Fringe("PRIORITY"))
     elif algorithm == "GREEDY":
-        greedy(maze, Fringe("STACK"))
+        greedy(maze, Fringe("PRIORITY"))
     elif algorithm == "ASTAR":
         astar(maze, Fringe("PRIORITY"))
     elif algorithm == "IDS":

@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
 import queue
 import sys
-from fringe_heap import FringeHeap
-from heap import Node
-
-# TODO rollback the changes because they are not needed
 
 
 class Fringe(object):
@@ -39,11 +35,6 @@ class Fringe(object):
         self.__type = fringe_type
         super(Fringe, self).__init__()
         self.__fringe = self.create_fringe(self.__type)
-
-    def update_priority(self, item: Node | int, priority: float) -> None:
-        if self.__fringe is None:
-            raise Exception("Undefined fringe")
-        self.__fringe.update_priority(item, priority)
 
     def push(self, item):
         """

@@ -3,39 +3,48 @@ from state import State
 
 
 def greedy(maze, fringe) -> bool:
-    """Implements the GREEDY search algorithm
+    """Implements the Greedy search algorithm
 
     Args:
         maze (Maze): A maze including all the paths
-        fringe (Fringe): A Fringe, more specifically standart Stack
+        fringe (Fringe): A Fringe, more specifically heap
 
     Returns:
         bool: Whether or not a path was found
     """
 
-    seen = set()
     room = maze.get_room(*maze.get_start())
-    state = State(room, None, 0 + room.heuristicValue)
+    state = State(room, None, 0, room.heuristicValue)
     fringe.push(state)
-    seen.add(room)
+    seen = dict()
+    seen[room] = state
 
     while not fringe.is_empty():
         state = fringe.pop()
         room = state.get_room()
-        neighbours = []
 
         if room.is_goal():
             return resolve_goal_found(maze, fringe, state)
 
         for c in room.get_connections():
-            neighbours.append(room.make_move(c, state.get_cost()))
-        neighbours.sort(key=lambda a: a[0].heuristicValue)
-
-        for _ in range(len(neighbours)):
-            new_room, cost = neighbours.pop()
+            new_room, cost = room.make_move(c, state.get_cost())
             if new_room not in seen:
-                fringe.push(State(new_room, state, cost + new_room.heuristicValue))
-                seen.add(new_room)
+                new_state = State(
+                    new_room,
+                    state,
+                    cost,
+                    priority=new_room.heuristicValue,
+                )
+                fringe.push(new_state)
+                seen[new_room] = new_state
+            else:
+                new_cost = cost + state.get_cost()
+                if new_cost < seen[new_room].get_cost():
+                    seen[new_room] = State(
+                        new_room,
+                        state,
+                        new_cost,
+                    )
 
     print("not solved")
     fringe.print_stats()
