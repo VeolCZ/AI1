@@ -95,6 +95,14 @@ class Maze:
 
         return total**0.5
 
+    # @staticmethod
+    # def get_heuristic(row):
+    # string = (str(row[1]) + str(row[2])).strip()
+    # try:
+    # return int(string)
+    # except ValueError:
+    # return None
+
     @staticmethod
     def check_connection(room, cell, direction):
         check = " "
@@ -134,6 +142,7 @@ class Maze:
                 start = idx * 8
                 # get part of input for one room
                 r = [row[start : start + 9] for row in lines]
+                # room.heuristicValue = self.get_heuristic(r[1])
                 self.check_connection(room, r[2][2], "UP")
                 self.check_connection(room, r[2][6], "DOWN")
                 self.check_connection(room, r[0][4], "NORTH")

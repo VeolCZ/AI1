@@ -20,11 +20,11 @@ def solve_maze_general(maze, algorithm):
     elif algorithm == "DFS":
         dbfs(maze, Fringe("STACK"))
     elif algorithm == "UCS":
-        ucs(maze, Fringe("HEAP"))
+        ucs(maze, Fringe("PRIORITY"))
     elif algorithm == "GREEDY":
         greedy(maze, Fringe("STACK"))
     elif algorithm == "ASTAR":
-        astar(maze, Fringe("HEAP"))
+        astar(maze, Fringe("PRIORITY"))
     elif algorithm == "IDS":
         ids(maze)
     else:

@@ -5,6 +5,8 @@ Description:
     Implements heap inspired by the lecture code (this is a reference :]).
 """
 
+# TODO remove me
+
 from __future__ import annotations
 
 

@@ -4,6 +4,8 @@ import sys
 from fringe_heap import FringeHeap
 from heap import Node
 
+# TODO rollback the changes because they are not needed
+
 
 class Fringe(object):
     """wrapper for queue lib from python to keep track of some statistics"""
