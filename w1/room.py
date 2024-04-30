@@ -17,7 +17,7 @@ class Room:
     def __hash__(self):
         return hash(self.coords)
 
-    def can_move_to(self, d) -> bool:
+    def can_move_to(self, d):
         """
         :param d: The desired direction
         :return: True if the move is possible, False otherwise

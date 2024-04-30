@@ -6,7 +6,7 @@ import sys
 class Fringe(object):
     """wrapper for queue lib from python to keep track of some statistics"""
 
-    # ### DO NOT CHANGE __MAX_FRINGE_SIZE ###
+    ### DO NOT CHANGE __MAX_FRINGE_SIZE ###
     __MAX_FRINGE_SIZE = 50000
     __fringe = None
     __insertions = 0
@@ -19,16 +19,19 @@ class Fringe(object):
         :param fringe_type: The desired type for the queue
         :return: A queue of type fringe_type
         """
-        if fringe_type is "STACK":
+        if fringe_type == "STACK":
             return queue.LifoQueue(self.__MAX_FRINGE_SIZE)
 
-        if fringe_type is "FIFO":
+        if fringe_type == "QUEUE":
             return queue.Queue(self.__MAX_FRINGE_SIZE)
 
-        if fringe_type is "PRIORITY":
+        if fringe_type == "PRIORITY":
             return queue.PriorityQueue(self.__MAX_FRINGE_SIZE)
 
-    def __init__(self, fringe_type='FIFO'):
+        if fringe_type == "HEAP":
+            return FringeHeap(self.__MAX_FRINGE_SIZE)
+
+    def __init__(self, fringe_type="QUEUE"):
         self.__type = fringe_type
         super(Fringe, self).__init__()
         self.__fringe = self.create_fringe(self.__type)
@@ -40,8 +43,11 @@ class Fringe(object):
         """
         # If the fringe is full, print an error and exit
         if self.__fringe.full():
-            print("Error: trying to apply push on an fringe that already contains MAX ("
-                  + str(self.__MAX_FRINGE_SIZE) + ") elements")
+            print(
+                "Error: trying to apply push on an fringe that already contains MAX ("
+                + str(self.__MAX_FRINGE_SIZE)
+                + ") elements"
+            )
             self.print_stats()
             sys.exit(1)
         self.__fringe.put(item, block=False)
@@ -78,7 +84,7 @@ class Fringe(object):
         return self.__deletions
 
     def print_stats(self):
-        """ Prints the statistics of the fringe """
+        """Prints the statistics of the fringe"""
         print("#### fringe statistics:")
         print("size: {0:>15d}".format(self.__fringe.qsize()))
         print("maximum size: {0:>7d}".format(self.__maxSize))

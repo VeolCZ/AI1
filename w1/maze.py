@@ -86,11 +86,22 @@ class Maze:
     def get_heuristic(
         coords: tuple[int, int, int], goal: tuple[int, int, int]
     ) -> float:
+        if goal is None:
+            return 0
+
         total = 0
         for i in range(3):
             total += (goal[i] - coords[i]) ** 2
 
         return total**0.5
+
+    # @staticmethod
+    # def get_heuristic(row):
+    # string = (str(row[1]) + str(row[2])).strip()
+    # try:
+    # return int(string)
+    # except ValueError:
+    # return None
 
     @staticmethod
     def check_connection(room, cell, direction):
@@ -131,6 +142,7 @@ class Maze:
                 start = idx * 8
                 # get part of input for one room
                 r = [row[start : start + 9] for row in lines]
+                # room.heuristicValue = self.get_heuristic(r[1])
                 self.check_connection(room, r[2][2], "UP")
                 self.check_connection(room, r[2][6], "DOWN")
                 self.check_connection(room, r[0][4], "NORTH")
@@ -143,14 +155,14 @@ class Maze:
                 if "X" in r[2]:
                     self.start = (idx, idy, floor)
                     room.set_start()
-
-        for c in self.rooms:
-            for c2 in c:
-                for r in c2:
-                    if r is not None:
-                        r.heuristicValue = self.get_heuristic(r.get_coords(), self.goal)
             # last line is first line for next row
             lines[0] = lines[4]
+
+        for c1 in self.rooms:
+            for c2 in c1:
+                for r in c2:
+                    if r is not None:
+                        r.heuristicValue = self.get_heuristic(r.coords, self.goal)
 
     def get_room_line_one(self, room, print_coords, direction):
         # value_when_true if condition else value_when_false
@@ -171,11 +183,11 @@ class Maze:
             c = "^"
         heuristic = "  "
         if room.get_heuristic_value() is not None:
-            heuristic = "{:>2}".format(room.get_heuristic_value())
+            heuristic = "{:.1f}".format(room.get_heuristic_value())
         cost = "   "
         coords = room.get_coords()
         if coords in direction and "cost" in direction[coords]:
-            cost = "{:>3}".format(direction[room.get_coords()]["cost"])
+            cost = "{:.1f}".format(direction[room.get_coords()]["cost"])
         return "%s%s %s%s" % (west, heuristic, c, cost)
 
     def get_middle_char(self, room, direction):
@@ -235,7 +247,7 @@ class Maze:
         direction = {}
         while state is not None:
             parent = state.get_parent()
-            if parent is None:
+            if parent == None:
                 break
             coords = state.get_room().get_coords()
             if coords not in direction:
