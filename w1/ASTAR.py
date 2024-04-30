@@ -30,10 +30,7 @@ def astar(maze, fringe) -> bool:
             new_room, cost = room.make_move(c, state.get_cost())
             if new_room not in seen:
                 new_state = State(
-                    new_room,
-                    state,
-                    cost,
-                    priority=cost + new_room.heuristicValue,
+                    new_room, state, cost, priority=cost + new_room.heuristicValue
                 )
                 fringe.push(new_state)
                 seen[new_room] = new_state

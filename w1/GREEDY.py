@@ -30,21 +30,14 @@ def greedy(maze, fringe) -> bool:
             new_room, cost = room.make_move(c, state.get_cost())
             if new_room not in seen:
                 new_state = State(
-                    new_room,
-                    state,
-                    cost,
-                    priority=new_room.heuristicValue,
+                    new_room, state, cost, priority=new_room.heuristicValue
                 )
                 fringe.push(new_state)
                 seen[new_room] = new_state
             else:
                 new_cost = cost + state.get_cost()
                 if new_cost < seen[new_room].get_cost():
-                    seen[new_room] = State(
-                        new_room,
-                        state,
-                        new_cost,
-                    )
+                    seen[new_room] = State(new_room, state, new_cost)
 
     print("not solved")
     fringe.print_stats()

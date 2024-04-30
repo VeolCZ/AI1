@@ -12,22 +12,23 @@ def ids(maze, fringe) -> bool:
     Returns:
         bool: Whether or not a path was found
     """
-    start = maze.get_room(*maze.get_start())
+
     depth = 3
     states_visited = 0
+    start = maze.get_room(*maze.get_start())
     while True:
-        t, state, states_visited_new = ds(start, depth, fringe)
+        state, new_states_visited = ds(start, depth, fringe)
 
-        if t:
+        if new_states_visited == -1:
             return resolve_goal_found(maze, fringe, state)
 
-        if states_visited == states_visited_new:
+        if states_visited == new_states_visited:
             print("not solved")
             fringe.print_stats()
             return False
 
         depth += 3
-        states_visited = states_visited_new
+        states_visited = new_states_visited
 
 
 def ds(maze_start, max_depth, fringe):
@@ -42,10 +43,10 @@ def ds(maze_start, max_depth, fringe):
         bool: Whether or not a path was found
     """
 
-    seen = set()
     steps = 0
     state = State(maze_start, None)
     fringe.push(state)
+    seen = set()
     seen.add(maze_start)
 
     while not fringe.is_empty():
@@ -54,7 +55,8 @@ def ds(maze_start, max_depth, fringe):
         room = state.get_room()
 
         if room.is_goal():
-            return True, state, 0
+            return state, -1
+
         if state.depth < max_depth:
             for d in room.get_connections():
                 new_room, cost = room.make_move(d, state.get_cost())
@@ -63,4 +65,4 @@ def ds(maze_start, max_depth, fringe):
                     fringe.push(new_state)
                     seen.add(new_room)
 
-    return False, state, steps
+    return state, steps
