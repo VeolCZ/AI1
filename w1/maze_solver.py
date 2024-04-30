@@ -26,7 +26,7 @@ def solve_maze_general(maze, algorithm):
     elif algorithm == "ASTAR":
         astar(maze, Fringe("PRIORITY"))
     elif algorithm == "IDS":
-        ids(maze)
+        ids(maze, Fringe("STACK"))
     else:
         print("Algorithm not found/implemented, exit")
         return

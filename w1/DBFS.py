@@ -14,7 +14,7 @@ def dbfs(maze, fringe) -> bool:
 
     seen = set()
     room = maze.get_room(*maze.get_start())
-    state = State(room, None, 0 + room.heuristicValue)
+    state = State(room, None, 0)
     fringe.push(state)
     seen.add(room)
 
@@ -28,7 +28,7 @@ def dbfs(maze, fringe) -> bool:
         for d in room.get_connections():
             new_room, cost = room.make_move(d, state.get_cost())
             if new_room not in seen:
-                new_state = State(new_room, state, cost + new_room.heuristicValue)
+                new_state = State(new_room, state, cost)
                 fringe.push(new_state)
                 seen.add(new_room)
 

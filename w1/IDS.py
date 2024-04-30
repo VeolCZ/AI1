@@ -1,68 +1,66 @@
 from DBFS import resolve_goal_found
-from fringe import Fringe
 from state import State
 
 
-def ids(maze) -> bool:
+def ids(maze, fringe) -> bool:
     """Implements the itterative deepening search algorithm
 
     Args:
         maze (Maze): A maze including all the paths
+        fringe (Fringe): A fringe to use (a stack)
 
     Returns:
         bool: Whether or not a path was found
     """
-
+    start = maze.get_room(*maze.get_start())
     depth = 3
+    states_visited = 0
     while True:
-        t, fringe, state = ds(maze, depth)
-        if t is None:
-            depth += 3
+        t, state, states_visited_new = ds(start, depth, fringe)
 
-        elif t:
+        if t:
             return resolve_goal_found(maze, fringe, state)
 
-        else:
+        if states_visited == states_visited_new:
             print("not solved")
             fringe.print_stats()
             return False
 
+        depth += 3
+        states_visited = states_visited_new
 
-def ds(maze, max_depth):
+
+def ds(maze_start, max_depth, fringe):
     """Inner function fo IDS search algorithm
 
     Args:
-        maze (Maze): A maze including all the paths
-        max_depth(int): Max depth to explore
+        maze_start (Room): Starting point of the mazes
+        max_depth (int): A max depth to which to explore
+        fringe (Fringe): A fringe to use (a stack)
 
     Returns:
         bool: Whether or not a path was found
     """
 
-    fringe = Fringe("STACK")
-    depth = 0
     seen = set()
-    room = maze.get_room(*maze.get_start())
-    state = State(room, None, 0 + room.heuristicValue)
+    steps = 0
+    state = State(maze_start, None)
     fringe.push(state)
-    seen.add(room)
+    seen.add(maze_start)
 
     while not fringe.is_empty():
         state = fringe.pop()
+        steps += 1
         room = state.get_room()
 
         if room.is_goal():
-            return True, fringe, state
+            return True, state, 0
+        if state.depth < max_depth:
+            for d in room.get_connections():
+                new_room, cost = room.make_move(d, state.get_cost())
+                if new_room not in seen:
+                    new_state = State(new_room, state, cost, depth=state.depth + 1)
+                    fringe.push(new_state)
+                    seen.add(new_room)
 
-        for d in room.get_connections():
-            new_room, cost = room.make_move(d, state.get_cost())
-            if new_room not in seen:
-                new_state = State(new_room, state, cost + new_room.heuristicValue)
-                fringe.push(new_state)
-                seen.add(new_room)
-        depth += 1
-
-        if depth > max_depth:
-            return None, None, None
-
-    return False, fringe, state
+    return False, state, steps
