@@ -14,7 +14,7 @@ def ucs(maze, fringe) -> bool:
     """
 
     room = maze.get_room(*maze.get_start())
-    state = State(room, None, 0)
+    state = State(room, None, 0, priority=0)
     fringe.push(state)
     seen = dict()
     seen[room] = state
@@ -28,14 +28,13 @@ def ucs(maze, fringe) -> bool:
 
         for c in room.get_connections():
             new_room, cost = room.make_move(c, state.get_cost())
+            new_state = State(new_room, state, cost, priority=cost)
             if new_room not in seen:
-                new_state = State(new_room, state, cost, priority=cost)
                 fringe.push(new_state)
                 seen[new_room] = new_state
-            else:
-                new_cost = cost + state.get_cost()
-                if new_cost < seen[new_room].get_cost():
-                    seen[new_room] = State(new_room, state, new_cost, priority=new_cost)
+            elif cost < seen[new_room].get_cost():
+                seen[new_room] = new_state
+                fringe.push(new_state)
 
     print("not solved")
     fringe.print_stats()

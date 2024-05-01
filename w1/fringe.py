@@ -28,9 +28,6 @@ class Fringe(object):
         if fringe_type == "PRIORITY":
             return queue.PriorityQueue(self.__MAX_FRINGE_SIZE)
 
-        if fringe_type == "HEAP":
-            return FringeHeap(self.__MAX_FRINGE_SIZE)
-
     def __init__(self, fringe_type="QUEUE"):
         self.__type = fringe_type
         super(Fringe, self).__init__()
