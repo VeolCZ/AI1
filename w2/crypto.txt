@@ -1,0 +1,48 @@
+    init_node=False,
+    init_arc=False,
+    keep_node=False,
+    keep_arc=False,
+    heuristic=None,
+Number Solutions: 1; Number States visited 25283; Number constraints evaluated 1087425
+
+    init_node=True,
+    init_arc=False,
+    keep_node=False,
+    keep_arc=False,
+    heuristic=None,
+Number Solutions: 1; Number States visited 25283; Number constraints evaluated 1087425
+
+    init_node=False,
+    init_arc=True,
+    keep_node=False,
+    keep_arc=False,
+    heuristic=None,
+Number Solutions: 1; Number States visited 25283; Number constraints evaluated 1087731
+
+    init_node=False,
+    init_arc=False,
+    keep_node=True,
+    keep_arc=False,
+    heuristic=None,
+Number Solutions: 1; Number States visited 4116; Number constraints evaluated 393630
+
+    init_node=False,
+    init_arc=False,
+    keep_node=False,
+    keep_arc=True,
+    heuristic=None,
+Number Solutions: 1; Number States visited 590; Number constraints evaluated 367766
+
+    init_node=False,
+    init_arc=False,
+    keep_node=False,
+    keep_arc=False,
+    heuristic="mrv",
+Number Solutions: 1; Number States visited 25283; Number constraints evaluated 1087425
+
+    init_node=False,
+    init_arc=False,
+    keep_node=False,
+    keep_arc=False,
+    heuristic="deg",
+Number Solutions: 1; Number States visited 25283; Number constraints evaluated 1087425

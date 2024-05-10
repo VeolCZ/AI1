@@ -26,10 +26,11 @@ constraints = [
 csp = CSP(
     variables,
     constraints,
-    init_node=True,
-    init_arc=True,
-    keep_node=True,
-    keep_arc=True,
+    init_node=False,
+    init_arc=False,
+    keep_node=False,
+    keep_arc=False,
+    heuristic="deg",
 )
 
 # Solve the csp and use verbose = True in order to print the search tree

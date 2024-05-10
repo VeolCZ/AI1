@@ -17,9 +17,7 @@ Fourth, the second left and the second on the right
 Are twins once you taste them, though different at first sight.
 """
 
-from CSP import CSP
-from Constraint import Constraint
-from Variable import Variable
+from CSP_solver import CSP, Constraint, Variable
 
 variables = [
     Variable("potion1", domain=["wine", "poison", "onwards", "back"]),
@@ -63,5 +61,13 @@ constraints.append(Constraint(f'potion6 != "poison"'))
 # Fourth, the second left and the second on the right Are twins once you taste them, though different at first sight.
 constraints.append(Constraint(f"potion2 == potion6"))
 
-csp = CSP(variables, constraints)
+csp = CSP(
+    variables,
+    constraints,
+    init_node=False,
+    init_arc=False,
+    heuristic="deg",
+    keep_node=False,
+    keep_arc=False,
+)
 csp.solve()
