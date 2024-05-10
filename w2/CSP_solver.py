@@ -251,7 +251,7 @@ class CSP:
         return [
             *filter(
                 lambda a: a.value is None,
-                sorted(self.variables, key=lambda a: len(a.constraints)),
+                sorted(self.variables, key=lambda a: len(a.constraints), reverse=True),
             )
         ][0]
 
