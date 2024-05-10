@@ -1,4 +1,3 @@
-from w2.Constraint import Constraint
 import ast
 
 
@@ -28,13 +27,3 @@ def connect_variables_and_constraints(csp):
                 if var not in c.variables:
                     c.variables.append(var)
                     var.constraints.append(c)
-
-
-# returns the binary inequality constraints between all input variables.
-def all_diff(variables) -> list[Constraint]:
-    setOfConstraints = []
-    for i, x in enumerate(variables):
-        for x2 in variables[i + 1 :]:
-            newConstraint = Constraint("{0} != {1}".format(x.name, x2.name))
-            setOfConstraints.append(newConstraint)
-    return setOfConstraints

@@ -1,6 +1,4 @@
-from w2.CSP import CSP
-from w2.Constraint import Constraint
-from w2.Variable import Variable
+from CSP_solver import CSP, Constraint, Variable
 
 variables = [
     Variable("A", domain=[4, 5, 6, 7, 8]),
@@ -19,5 +17,5 @@ constraints = [
     Constraint("A*E + B* F + C != D"),
 ]
 
-csp = CSP(variables, constraints, keep_node=False, keep_arc=False, heuristic="mrv")
+csp = CSP(variables, constraints, keep_node=False, keep_arc=False, heuristic="deg")
 csp.solve()

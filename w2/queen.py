@@ -1,7 +1,7 @@
-from w2.CSP import CSP
-from w2.Constraint import Constraint
-from w2.Variable import Variable
-from w2.utils import all_diff
+from CSP import CSP
+from Constraint import Constraint
+from Variable import Variable
+from utils import all_diff
 
 N_QUEENS = 8
 

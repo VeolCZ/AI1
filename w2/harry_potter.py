@@ -17,9 +17,9 @@ Fourth, the second left and the second on the right
 Are twins once you taste them, though different at first sight.
 """
 
-from w2.CSP import CSP
-from w2.Constraint import Constraint
-from w2.Variable import Variable
+from CSP import CSP
+from Constraint import Constraint
+from Variable import Variable
 
 variables = [
     Variable("potion1", domain=["wine", "poison", "onwards", "back"]),

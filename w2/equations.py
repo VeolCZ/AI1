@@ -1,8 +1,6 @@
-from w2.CSP import CSP
-from w2.Constraint import Constraint
-from w2.Variable import Variable
-
 # The set of variables of the CSP with domains
+from CSP_solver import CSP, Constraint, Variable
+
 variables = [
     Variable("A", domain=[1, 2]),
     Variable("B", domain=[1, 2, 3]),
@@ -17,9 +15,9 @@ csp = CSP(
     variables,
     constraints,
     init_node=False,
-    init_arc=False,
-    keep_node=False,
-    keep_arc=False,
+    init_arc=True,
+    keep_node=True,
+    keep_arc=True,
 )
 
 # Solve the csp and use verbose = True in order to print the search tree
