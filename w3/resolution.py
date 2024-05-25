@@ -17,21 +17,23 @@ class Clause:
         :param clause: The clause to be parsed as a string
         """
         idx = 0
-        clause = ''.join(clause.split())
+        clause = "".join(clause.split())
 
         while idx < len(clause):
-            if clause[idx] == '~':
+            if clause[idx] == "~":
                 idx += 1
-                assert clause[idx].isalpha() and clause[
-                    idx].islower(), "Invalid symbol. A symbol must be a single lowercase letter"
+                assert (
+                    clause[idx].isalpha() and clause[idx].islower()
+                ), "Invalid symbol. A symbol must be a single lowercase letter"
                 self.negative.append(clause[idx])
                 idx += 1
-            elif clause[idx] == ',':
+            elif clause[idx] == ",":
                 idx += 1
                 assert idx < len(clause), "Syntax error: truncated clause"
             else:
-                assert clause[idx].isalpha() and clause[
-                    idx].islower(), "Invalid symbol. A symbol must be a single lowercase letter"
+                assert (
+                    clause[idx].isalpha() and clause[idx].islower()
+                ), "Invalid symbol. A symbol must be a single lowercase letter"
                 self.positive.append(clause[idx])
                 idx += 1
 
@@ -52,7 +54,7 @@ class Clause:
         # This occurs when two clauses are resolved with multiple complementary literals
         duplicate = False
 
-        print("[", end='')
+        print("[", end="")
 
         if len(all_symbols) == 0:
             print("]=FALSE", end="")
@@ -66,15 +68,15 @@ class Clause:
                 else:
                     duplicate = False
 
-                print(symbol, end=',')
+                print(symbol, end=",")
 
             symbol = all_symbols[-1]
             if not duplicate and symbol in self.negative:
                 symbol = "~" + symbol
 
-            print(symbol, end='')
+            print(symbol, end="")
 
-            print("]", end='')
+            print("]", end="")
 
     def equals(self, clause):
         """
@@ -83,7 +85,9 @@ class Clause:
         """
         # Sort the positive and negative symbol lists in both clauses (alphabetically). If both lists equal the
         # corresponding lists in the other clause, the clauses are equal
-        if sorted(clause.positive) == sorted(self.positive) and sorted(clause.negative) == sorted(self.negative):
+        if sorted(clause.positive) == sorted(self.positive) and sorted(
+            clause.negative
+        ) == sorted(self.negative):
             return True
 
         return False
@@ -93,11 +97,11 @@ def print_clause_set(clause_set):
     Prints a clause set
     :param clause_set: The clause set to be printed
     """
-    print("{", end='')
+    print("{", end="")
 
     for clause in clause_set[:-1]:
         clause.print_clause()
-        print(",", end=' ')
+        print(",", end=" ")
 
     clause_set[-1].print_clause()
 
@@ -184,8 +188,9 @@ def resolve_clauses(clause1, clause2):
     # Find all complementary literals by taking the atoms that are both in clause1's set of positive literals and
     # clause2 negative literals, plus the atoms that are both in clause1's negative literals and clause2's set of
     # positive literals
-    complements = [atom for atom in clause1.positive if atom in clause2.negative] + [atom for atom in clause1.negative
-                                                                                     if atom in clause2.positive]
+    complements = [atom for atom in clause1.positive if atom in clause2.negative] + [
+        atom for atom in clause1.negative if atom in clause2.positive
+    ]
 
     # Sort the complementary literals alphabetically
     complements = sorted(complements)
@@ -214,7 +219,8 @@ def can_resolve(clause1, clause2):
     :return: True if it's useful to apply resolution, otherwise False
     """
     return bool(set(clause1.positive).intersection(set(clause2.negative))) or bool(
-        set(clause2.positive).intersection(set(clause1.negative)))
+        set(clause2.positive).intersection(set(clause1.negative))
+    )
 
 def resolution(kb):
     """
@@ -238,7 +244,7 @@ def resolution(kb):
 
         # If the set of inferred clauses is a subset of the knowledge base (i.e. all clauses are already in the kb),
         # no new clauses can be inferred
-        if (is_clause_subset(inferred, kb)):
+        if is_clause_subset(inferred, kb):
             break
 
         # Add the inferred clauses to the knowledge base
@@ -264,12 +270,67 @@ def init():
 # It should not be necessary to change any code above this line!
 ##
 
+# prove (thing_to_prove, clause_list):
+#     for clause1 in clause_list of length 1:
+#         for clause2 in clause_list of length 1:
+#             if clause1 == !clause2:
+#                 new_clause_list1 = all clauses in clause_list containing clause1 within them
+#                 new_clause_list2 = all clauses in clause_list containing clause2 within them
+#
+#                 new_clause_list1 = new_clause_list1 but every element has clause1 removed from them (e.g [a, b, !c] becomes [b, !c] if clause1 is a)
+#                 new_clause_list2 = new_clause_list2 but every element has clause2 removed from them (e.g [a, b, !c] becomes [b, !c] if clause2 is a)
+#
+#                 prove(clause1, clause_list1)
+#                 prove(clause1, clause_list2)
+#
+#                 print(f"{thing_to_prove} is inferred from {clause1 + thing_to_prove} and {clause2 + thing_to_prove}")
+
 # [a,~b,~d] is inferred from [a,~b,~c,~d] and [c,~d].
 # [~b,~d] is inferred from [~a,~b] and [a,~b,~d].
 # [~d] is inferred from [b,~d] and [~b,~d].
 # []=FALSE is inferred from [d] and [~d].
+def clause_contains(clause, clauses):
+    res = []
+    for c in clauses:
+        for v in clause.positive:
+            if v not in c.positive:
+                break
+        for v in clause.negative:
+            if v not in c.negative:
+                break
+        res += c
+
+    return res
+
+def remove_clause_from_clause(clause1, clause2):
+    clause2.positive = [*filter(lambda a: a in clause1.positive, clause2.positive)]
+    clause2.negative = [*filter(lambda a: a in clause1.negative, clause2.negative)]
+
+    return clause2
+
 def recursive_print_proof(idx, clause_set):
-    pass
+
+    # clauses = [*filter(lambda a: (len(a.positive) + len(a.negative)) == depth, clause_set)]
+
+    # for combination in product(clauses, repeat=2):
+    #     for id in combination[0].positive:
+    #         if id in combination[1].negative:
+    #             return recursive_print_proof(idx, clause_set - clauses, depth+1)
+
+    clauses = [*filter(lambda a: (len(a.positive) + len(a.negative)) == 1, clause_set)]
+    for clause1 in clauses:
+        for clause2 in clauses:
+            if clause1.negative[0] == clause2.positive[0] or clause1.positive[0] == clause2.negative[0]:
+                new_clause_list1 = clause_contains(clause1, clause_set)
+                new_clause_list2 = clause_contains(clause2, clause_set)
+
+                new_clause_list1 = [*map(lambda a: remove_clause_from_clause(clause1, a.copy_clause()))]
+                new_clause_list2 = [*map(lambda a: remove_clause_from_clause(clause2, a.copy_clause()))]
+
+                recursive_print_proof(clause1, new_clause_list1)
+                recursive_print_proof(clause2, new_clause_list2)
+
+                print(f"{thing_to_prove} is inferred from {clause1 + thing_to_prove} and {clause2 + thing_to_prove}")
 
 def print_proof(clause_set):
     empty_clause = Clause("")
