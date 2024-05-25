@@ -1,4 +1,5 @@
 #!/usr/bin/python
+from itertools import product
 import sys
 import random
 
@@ -6,7 +7,6 @@ import random
 kb = []
 infer = []
 identifiers = []
-
 
 class Expression:
     """
@@ -23,7 +23,6 @@ class Expression:
         self.operand1 = operand1
         self.operand2 = operand2
 
-
 def match(str, sentence):
     """
     Checks whether the expected sequence of characters is actually in the sentence.
@@ -32,14 +31,13 @@ def match(str, sentence):
     :param sentence: The sentence to match str with
     :return: The input sentence with the matched character(s) removed
     """
-    assert str == sentence[:len(str)], "Parsing failed. Expected " + str
+    assert str == sentence[: len(str)], "Parsing failed. Expected " + str
 
-    if (len(sentence[len(str):]) == 0):
+    if len(sentence[len(str) :]) == 0:
         # This only happens when the sentence ends with a ')', which would make the function return an empty string
         return " "
 
-    return sentence[len(str):]
-
+    return sentence[len(str) :]
 
 def make_constant_expression(value):
     """
@@ -49,7 +47,6 @@ def make_constant_expression(value):
     """
     return Expression(operator="CONSTANT", atom=value)
 
-
 def make_identifier(id):
     """
     If the input identifier is 'true' or 'false', this function creates a constant expression.
@@ -58,16 +55,15 @@ def make_identifier(id):
     :return: Either an expression of type CONSTANT with value True or False,
     or an expression of type IDENTIFIER with the value in id
     """
-    if id == 'false':
+    if id == "false":
         return make_constant_expression(False)
-    if id == 'true':
+    if id == "true":
         return make_constant_expression(True)
 
     if id not in identifiers:
         identifiers.append(id)
 
     return Expression(operator="IDENTIFIER", atom=id)
-
 
 def make_negation(expression):
     """
@@ -76,7 +72,6 @@ def make_negation(expression):
     :return: The negated expression
     """
     return Expression(operator="NEG", operand1=expression)
-
 
 def make_binary_expression(operator, expression1, expression2):
     """
@@ -88,7 +83,6 @@ def make_binary_expression(operator, expression1, expression2):
     """
     return Expression(operator=operator, operand1=expression1, operand2=expression2)
 
-
 def print_expression(expression, end=True):
     """
     Recursively prints an expression
@@ -99,44 +93,43 @@ def print_expression(expression, end=True):
         if end:
             print(expression.atom)
         else:
-            print(expression.atom, end='')
+            print(expression.atom, end="")
         return
 
     if expression.operator == "IDENTIFIER":
         if end:
             print(expression.atom)
         else:
-            print(expression.atom, end='')
+            print(expression.atom, end="")
         return
 
     if expression.operator == "NEG":
-        print("!", end='')
+        print("!", end="")
         print_expression(expression.operand1, end)
         return
 
-    print("(", end='')
+    print("(", end="")
 
     print_expression(expression.operand1, end=False)
 
     if expression.operator == "AND":
-        print(" * ", end='')
+        print(" * ", end="")
 
     if expression.operator == "OR":
-        print(" + ", end='')
+        print(" + ", end="")
 
     if expression.operator == "IMPLIES":
-        print(" => ", end='')
+        print(" => ", end="")
 
     if expression.operator == "EQUIV":
-        print(" <=> ", end='')
+        print(" <=> ", end="")
 
     print_expression(expression.operand2, end=False)
 
     if end:
         print(")")
     else:
-        print(")", end='')
-
+        print(")", end="")
 
 def print_expression_sets():
     """
@@ -156,7 +149,6 @@ def print_expression_sets():
 
     print("===============\n")
 
-
 ##
 # Start of recursive parsing functions
 # These functions recursively build a single expression. It checks whether the next part of the sentence is
@@ -167,9 +159,11 @@ def print_expression_sets():
 
 def parse_atom(sentence):
     idx = 0
-    id = ''
+    id = ""
 
-    assert sentence[idx].isalpha(), "Parse error, expected false, true, identifier or (expression)"
+    assert sentence[
+        idx
+    ].isalpha(), "Parse error, expected false, true, identifier or (expression)"
 
     while idx < len(sentence) and sentence[idx].isalpha():
         id += sentence[idx]
@@ -179,7 +173,6 @@ def parse_atom(sentence):
         sentence = sentence[idx:]
 
     return make_identifier(id), sentence
-
 
 def parse_term(sentence):
     if sentence[0] == "!":
@@ -197,12 +190,11 @@ def parse_term(sentence):
 
     return parse_atom(sentence)
 
-
 def parse_conjunction(sentence):
     e0 = Expression()
     e0, sentence = parse_term(sentence)
 
-    if sentence[0] == '*':
+    if sentence[0] == "*":
         e1 = Expression()
         sentence = match("*", sentence)
         e1, sentence = parse_term(sentence)
@@ -211,12 +203,11 @@ def parse_conjunction(sentence):
 
     return e0, sentence
 
-
 def parse_disjunction(sentence):
     e0 = Expression()
     e0, sentence = parse_conjunction(sentence)
 
-    if sentence[0] == '+':
+    if sentence[0] == "+":
         e1 = Expression()
         sentence = match("+", sentence)
         e1, sentence = parse_conjunction(sentence)
@@ -225,12 +216,11 @@ def parse_disjunction(sentence):
 
     return e0, sentence
 
-
 def parse_implication(sentence):
     e0 = Expression()
     e0, sentence = parse_disjunction(sentence)
 
-    if sentence[0] == '=':
+    if sentence[0] == "=":
         e1 = Expression()
         sentence = match("=>", sentence)
         e1, sentence = parse_disjunction(sentence)
@@ -239,12 +229,11 @@ def parse_implication(sentence):
 
     return e0, sentence
 
-
 def parse_equivalence(sentence):
     e0 = Expression()
     e0, sentence = parse_implication(sentence)
 
-    if sentence[0] == '<':
+    if sentence[0] == "<":
         e1 = Expression()
         sentence = match("<=>", sentence)
         e1, sentence = parse_implication(sentence)
@@ -252,7 +241,6 @@ def parse_equivalence(sentence):
         return make_binary_expression("EQUIV", e0, e1), sentence
 
     return e0, sentence
-
 
 ##
 # End of set of recursive parsing functions
@@ -269,7 +257,6 @@ def parse_sentence(sentence):
 
     return e
 
-
 def parse_sentence_set(set, parsed_set):
     """
     Parses each sentence in the set and adds it to either kb or infer
@@ -280,12 +267,13 @@ def parse_sentence_set(set, parsed_set):
         sentence = sentence.replace(" ", "").lower()
         parsed_set.append(parse_sentence(sentence))
 
-
 def parse_input():
     """
     Reads a model from the input file, parses the KB and INFER sentence sets and stores it in kb and infer
     """
-    assert len(sys.argv) > 1, "No arguments given. Please provide a model in an input file as described in the pdf"
+    assert (
+        len(sys.argv) > 1
+    ), "No arguments given. Please provide a model in an input file as described in the pdf"
 
     input_file = sys.argv[1]
 
@@ -294,14 +282,15 @@ def parse_input():
     data = eval(infile)
 
     print("Complete input: ", data)
-    assert 'KB' in data.keys(), "Parsing failed, expected input to contain element 'KB'"
-    assert 'INFER' in data.keys(), "Parsing failed, expected input to contain element 'INFER'"
+    assert "KB" in data.keys(), "Parsing failed, expected input to contain element 'KB'"
+    assert (
+        "INFER" in data.keys()
+    ), "Parsing failed, expected input to contain element 'INFER'"
 
-    parse_sentence_set(data['KB'], kb)
-    parse_sentence_set(data['INFER'], infer)
+    parse_sentence_set(data["KB"], kb)
+    parse_sentence_set(data["INFER"], infer)
 
     print("Identifiers: ", identifiers)
-
 
 def evaluate_expression(e, model):
     """
@@ -317,22 +306,29 @@ def evaluate_expression(e, model):
         return model[e.atom]
 
     if e.operator == "EQUIV":
-        return evaluate_expression(e.operand1, model) == evaluate_expression(e.operand2, model)
+        return evaluate_expression(e.operand1, model) == evaluate_expression(
+            e.operand2, model
+        )
 
     if e.operator == "IMPLIES":
-        return (not evaluate_expression(e.operand1, model)) or evaluate_expression(e.operand2, model)
+        return (not evaluate_expression(e.operand1, model)) or evaluate_expression(
+            e.operand2, model
+        )
 
     if e.operator == "AND":
-        return evaluate_expression(e.operand1, model) and evaluate_expression(e.operand2, model)
+        return evaluate_expression(e.operand1, model) and evaluate_expression(
+            e.operand2, model
+        )
 
     if e.operator == "OR":
-        return evaluate_expression(e.operand1, model) or evaluate_expression(e.operand2, model)
+        return evaluate_expression(e.operand1, model) or evaluate_expression(
+            e.operand2, model
+        )
 
     if e.operator == "NEG":
         return not evaluate_expression(e.operand1, model)
 
     raise ValueError("Fatal error: we should never get here")
-
 
 def evaluate_expression_set(expression_set, model):
     """
@@ -346,7 +342,6 @@ def evaluate_expression_set(expression_set, model):
             return False
 
     return True
-
 
 def evaluate_random_model():
     """
@@ -371,26 +366,37 @@ def evaluate_random_model():
     else:
         print("KB entails INFER\n")
 
-
 ##
 # It should not be necessary to change any code above this line!
 ##
 
 def check_all_models():
-    # This function should return True if KB entails INFER, otherwise it should return False
-    print("The function check_all_models is not implemented yet")
-    print("The goal of this pdf is to implement this yourself")
-    print("Currently, this function always returns True")
+    print("Check all models:")
 
-    return True
+    for combination in product([True, False], repeat=len(identifiers)):
+        model = {}
+        for i, v in enumerate(combination):
+            model[identifiers[i]] = v
 
+        kb_eval = evaluate_expression_set(kb, model)
+        infer_eval = evaluate_expression_set(infer, model)
+
+        if kb_eval and not infer_eval:
+            print("     KB evaluates to: ", kb_eval)
+            print("     INFER evaluates to: ", infer_eval, "\n")
+            print("KB does not entail INFER\n")
+            print("Counter example model: ", model)
+            return
+
+    print("     KB evaluates to: ", kb_eval)
+    print("     INFER evaluates to: ", infer_eval, "\n")
+    print("KB entails INFER\n")
 
 def main():
     parse_input()
     print_expression_sets()
     evaluate_random_model()
     check_all_models()
-
 
 if __name__ == "__main__":
     main()

@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-
 class Clause:
     """
     A class for clauses. A clause consists of a list of positive and negative symbols.
@@ -89,7 +88,6 @@ class Clause:
 
         return False
 
-
 def print_clause_set(clause_set):
     """
     Prints a clause set
@@ -105,7 +103,6 @@ def print_clause_set(clause_set):
 
     print("}")
 
-
 def find_index_of_clause(clause, clause_set):
     """
     Finds the index of the given clause in the given clause set.
@@ -120,7 +117,6 @@ def find_index_of_clause(clause, clause_set):
 
     return False
 
-
 def is_element_of_clause_set(clause, clause_set):
     """
     Checks if the given clause is an element in the given clause set
@@ -134,7 +130,6 @@ def is_element_of_clause_set(clause, clause_set):
 
     return False
 
-
 def contains_empty_clause(clause_set):
     """
     Checks if the empty clause is an element in the clause set
@@ -146,7 +141,6 @@ def contains_empty_clause(clause_set):
         return True
 
     return False
-
 
 def is_clause_subset(clause_set1, clause_set2):
     """
@@ -163,7 +157,6 @@ def is_clause_subset(clause_set1, clause_set2):
 
     return True
 
-
 def union_of_clause_sets(clause_set1, clause_set2):
     """
     Returns the union of two clause sets
@@ -176,7 +169,6 @@ def union_of_clause_sets(clause_set1, clause_set2):
             clause_set1.append(clause)
 
     return clause_set1
-
 
 # Main program
 
@@ -213,7 +205,6 @@ def resolve_clauses(clause1, clause2):
 
     return resolvent
 
-
 def can_resolve(clause1, clause2):
     """
     Check whether resolution can be applied to two clauses. It only makes sense to apply resolution if there is
@@ -224,7 +215,6 @@ def can_resolve(clause1, clause2):
     """
     return bool(set(clause1.positive).intersection(set(clause2.negative))) or bool(
         set(clause2.positive).intersection(set(clause1.negative)))
-
 
 def resolution(kb):
     """
@@ -256,7 +246,6 @@ def resolution(kb):
 
     return kb
 
-
 def init():
     """
     Makes an example hardcoded KB with clauses {~a,~b}, {a,~b,~c,~d}, {b,~d}, {c,~d}
@@ -271,20 +260,21 @@ def init():
 
     return kb
 
-
 ##
 # It should not be necessary to change any code above this line!
 ##
 
+# [a,~b,~d] is inferred from [a,~b,~c,~d] and [c,~d].
+# [~b,~d] is inferred from [~a,~b] and [a,~b,~d].
+# [~d] is inferred from [b,~d] and [~b,~d].
+# []=FALSE is inferred from [d] and [~d].
 def recursive_print_proof(idx, clause_set):
-    print("Implement the function recursive_print_proof() yourself!")
-
+    pass
 
 def print_proof(clause_set):
     empty_clause = Clause("")
     idx = find_index_of_clause(empty_clause, clause_set)
     recursive_print_proof(idx, clause_set)
-
 
 def main():
     kb = init()
@@ -303,7 +293,6 @@ def main():
         print_proof(kb)
     else:
         print("Resolution proof failed")
-
 
 if __name__ == "__main__":
     main()
