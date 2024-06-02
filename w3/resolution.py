@@ -1,5 +1,9 @@
 #!/usr/bin/python
 
+from collections import Counter
+from copy import deepcopy
+from itertools import combinations
+
 class Clause:
     """
     A class for clauses. A clause consists of a list of positive and negative symbols.
@@ -90,6 +94,13 @@ class Clause:
         ) == sorted(self.negative):
             return True
 
+        return False
+
+    def is_logicaly_equvivalent(self, clause):
+        if (sorted(self.positive) == sorted(clause.positive)) and (
+            sorted(self.negative) == sorted(clause.negative)
+        ):
+            return True
         return False
 
 def print_clause_set(clause_set):
@@ -270,67 +281,90 @@ def init():
 # It should not be necessary to change any code above this line!
 ##
 
-# prove (thing_to_prove, clause_list):
-#     for clause1 in clause_list of length 1:
-#         for clause2 in clause_list of length 1:
-#             if clause1 == !clause2:
-#                 new_clause_list1 = all clauses in clause_list containing clause1 within them
-#                 new_clause_list2 = all clauses in clause_list containing clause2 within them
-#
-#                 new_clause_list1 = new_clause_list1 but every element has clause1 removed from them (e.g [a, b, !c] becomes [b, !c] if clause1 is a)
-#                 new_clause_list2 = new_clause_list2 but every element has clause2 removed from them (e.g [a, b, !c] becomes [b, !c] if clause2 is a)
-#
-#                 prove(clause1, clause_list1)
-#                 prove(clause1, clause_list2)
-#
-#                 print(f"{thing_to_prove} is inferred from {clause1 + thing_to_prove} and {clause2 + thing_to_prove}")
+def resolving_clauses(clause1: Clause, clause2: Clause) -> Clause:
+    """Creates a clause that is a resolution of two clauses.
 
-# [a,~b,~d] is inferred from [a,~b,~c,~d] and [c,~d].
-# [~b,~d] is inferred from [~a,~b] and [a,~b,~d].
-# [~d] is inferred from [b,~d] and [~b,~d].
-# []=FALSE is inferred from [d] and [~d].
-def clause_contains(clause, clauses):
-    res = []
-    for c in clauses:
-        for v in clause.positive:
-            if v not in c.positive:
+    Args:
+        clause1 (Clause): First clause to resolve for
+        clause2 (Clause): Second clause to resolve for
+
+    Returns:
+        Clause: Resulting Clause
+    """
+
+    resolvent = Clause("")
+    for l in clause1.positive:
+        if l not in clause2.negative:
+            resolvent.positive.append(l)
+    for l in clause1.negative:
+        if l not in clause2.positive:
+            resolvent.negative.append(l)
+    for l in clause2.positive:
+        if l not in clause1.negative:
+            resolvent.positive.append(l)
+    for l in clause2.negative:
+        if l not in clause1.positive:
+            resolvent.negative.append(l)
+    return resolvent
+
+def print_proof_step(target: Clause, clause1: Clause, clause2: Clause) -> None:
+    """Prints a proof step.
+
+    Args:
+        target (Clause): Clause proven
+        clause1 (Clause): First part of the proof
+        clause2 (Clause): Second part of the proof
+    """
+
+    target.print_clause()
+    print(" was proven by: ", end="")
+    clause1.print_clause()
+    print(" and ", end="")
+    clause2.print_clause()
+    print()
+
+def recursive_print_proof(
+    idx: int,
+    clause_set: list[Clause],
+    target: Clause = None,
+    start_search_idx: int = None,
+    branching_depth: int = 1,
+) -> None:
+    """Recursively prints one way to proof the solution.
+
+    Args:
+        idx (int): Index of the empty clause
+        clause_set (list[Clause]): A set of all proved clauses
+        target (Clause, optional): Clause to be proven. Defaults to None.
+        start_search_idx (int, optional): The index at which to search from clause_set. Defaults to None.
+        branching_depth (int, optional): The branching depth of the function. Defaults to 1.
+    """
+
+    if branching_depth == 1:
+        start_search_idx = idx - 1
+        target = clause_set[idx]
+
+    i = start_search_idx
+    axiom = True
+    while i >= 0:
+        j = start_search_idx
+        while j >= 0:
+            if resolving_clauses(clause_set[i], clause_set[j]).is_logicaly_equvivalent(
+                target
+            ):
+                axiom = False
+                recursive_print_proof(
+                    idx, clause_set, clause_set[i], i - 1, branching_depth + 1
+                )
+                recursive_print_proof(
+                    idx, clause_set, clause_set[j], j - 1, branching_depth + 1
+                )
+                print_proof_step(target, clause_set[i], clause_set[j])
                 break
-        for v in clause.negative:
-            if v not in c.negative:
-                break
-        res += c
-
-    return res
-
-def remove_clause_from_clause(clause1, clause2):
-    clause2.positive = [*filter(lambda a: a in clause1.positive, clause2.positive)]
-    clause2.negative = [*filter(lambda a: a in clause1.negative, clause2.negative)]
-
-    return clause2
-
-def recursive_print_proof(idx, clause_set):
-
-    # clauses = [*filter(lambda a: (len(a.positive) + len(a.negative)) == depth, clause_set)]
-
-    # for combination in product(clauses, repeat=2):
-    #     for id in combination[0].positive:
-    #         if id in combination[1].negative:
-    #             return recursive_print_proof(idx, clause_set - clauses, depth+1)
-
-    clauses = [*filter(lambda a: (len(a.positive) + len(a.negative)) == 1, clause_set)]
-    for clause1 in clauses:
-        for clause2 in clauses:
-            if clause1.negative[0] == clause2.positive[0] or clause1.positive[0] == clause2.negative[0]:
-                new_clause_list1 = clause_contains(clause1, clause_set)
-                new_clause_list2 = clause_contains(clause2, clause_set)
-
-                new_clause_list1 = [*map(lambda a: remove_clause_from_clause(clause1, a.copy_clause()))]
-                new_clause_list2 = [*map(lambda a: remove_clause_from_clause(clause2, a.copy_clause()))]
-
-                recursive_print_proof(clause1, new_clause_list1)
-                recursive_print_proof(clause2, new_clause_list2)
-
-                print(f"{thing_to_prove} is inferred from {clause1 + thing_to_prove} and {clause2 + thing_to_prove}")
+            j -= 1
+        i -= 1
+        if not axiom:
+            break
 
 def print_proof(clause_set):
     empty_clause = Clause("")
