@@ -32,7 +32,6 @@ odd(s(0)).
 odd(s(N)) :- even(N).
 
 % div2(N, D) :- plus(D, D, N).
-
 div2(N, D) :- times(D,s(s(0)),N).
 
 log(X,B,N) :- pow(B, N, X).
@@ -43,22 +42,30 @@ fib(X, Y) :-
     minus(Y, X, Z),
     fib(Z, X).
 
-% power(X,0,_) :- s(0).
-% power(X,s(0),_) :- X.
-% power(X,N,Y) :- even(N),
+%iso(X) :- x=0
+iso(X) :- X is 0.
 
-power(_, 0, 1) :- s(0).
-power(X, N, Y) :-
-    N1 is N // s(s(0)),
-    power(X, N1, Y1),
-    (even(N) ->
-        Y is Y1 * Y1;
-        Y is X * Y1 * Y1
-    ).
+%power(X, Y, Z) is true if X^Y = Z
+power(X,0,s(0)) :- isnumber(X).
+power(X,s(Y),Z) :- odd(s(Y)), power(X, Y, W), times(X, W, Z).
+power(X, Y, Z) :- even(Y), times(X, X, M), plus(N, N, Y), pow(M, N, Z).
 
 % a2b = (a2)b and a2b+1 = a · a2b
 
-% Example queries:
-% Isnumbers are represented as successors of 0. For example, 2 is s(s(0)).
-% 2+2=4 is plus(s(s(0)), s(s(0)), s(s(s(s(0)))))
-% 3*2=? is times(s(s(s(0))), s(s(0)), X)
+len([],0).
+len([H|T],N) :- len(T,N1), N is N1+1.
+
+%Membership
+member(X, []) :- false.
+member(X, [H|T]):- X is H; member(X, T).
+
+%Concationation
+concat(X,[], X).
+concat([T|B], [T|A], X) :- concat(B, A, X).
+
+%Reverse
+reverse([], []).
+reverse([X|T], R) :- reverse(T, NewR), concat(R, NewR, [X]).
+
+%Palindrome
+palindrome(L) :- reverse(L, L).
