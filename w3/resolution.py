@@ -1,10 +1,5 @@
 #!/usr/bin/python
 
-from collections import Counter
-from copy import deepcopy
-from itertools import combinations
-
-
 class Clause:
     """
     A class for clauses. A clause consists of a list of positive and negative symbols.
@@ -104,7 +99,6 @@ class Clause:
             return True
         return False
 
-
 def print_clause_set(clause_set):
     """
     Prints a clause set
@@ -120,7 +114,6 @@ def print_clause_set(clause_set):
 
     print("}")
 
-
 def find_index_of_clause(clause, clause_set):
     """
     Finds the index of the given clause in the given clause set.
@@ -135,7 +128,6 @@ def find_index_of_clause(clause, clause_set):
 
     return False
 
-
 def is_element_of_clause_set(clause, clause_set):
     """
     Checks if the given clause is an element in the given clause set
@@ -149,7 +141,6 @@ def is_element_of_clause_set(clause, clause_set):
 
     return False
 
-
 def contains_empty_clause(clause_set):
     """
     Checks if the empty clause is an element in the clause set
@@ -161,7 +152,6 @@ def contains_empty_clause(clause_set):
         return True
 
     return False
-
 
 def is_clause_subset(clause_set1, clause_set2):
     """
@@ -178,7 +168,6 @@ def is_clause_subset(clause_set1, clause_set2):
 
     return True
 
-
 def union_of_clause_sets(clause_set1, clause_set2):
     """
     Returns the union of two clause sets
@@ -192,9 +181,7 @@ def union_of_clause_sets(clause_set1, clause_set2):
 
     return clause_set1
 
-
 # Main program
-
 
 def resolve_clauses(clause1, clause2):
     """
@@ -230,7 +217,6 @@ def resolve_clauses(clause1, clause2):
 
     return resolvent
 
-
 def can_resolve(clause1, clause2):
     """
     Check whether resolution can be applied to two clauses. It only makes sense to apply resolution if there is
@@ -242,7 +228,6 @@ def can_resolve(clause1, clause2):
     return bool(set(clause1.positive).intersection(set(clause2.negative))) or bool(
         set(clause2.positive).intersection(set(clause1.negative))
     )
-
 
 def resolution(kb):
     """
@@ -274,7 +259,6 @@ def resolution(kb):
 
     return kb
 
-
 def init() -> list[Clause]:
     """
     Reads a KB from stdin.
@@ -287,11 +271,9 @@ def init() -> list[Clause]:
     ]
     return [*map(Clause, input_kb)]
 
-
 ##
 # It should not be necessary to change any code above this line!
 ##
-
 
 def resolving_clauses(clause1: Clause, clause2: Clause) -> Clause:
     """Creates a clause that is a resolution of two clauses.
@@ -319,7 +301,6 @@ def resolving_clauses(clause1: Clause, clause2: Clause) -> Clause:
             resolvent.negative.append(l)
     return resolvent
 
-
 def print_proof_step(target: Clause, clause1: Clause, clause2: Clause) -> None:
     """Prints a proof step.
 
@@ -335,7 +316,6 @@ def print_proof_step(target: Clause, clause1: Clause, clause2: Clause) -> None:
     print(" and ", end="")
     clause2.print_clause()
     print()
-
 
 def recursive_print_proof(
     idx: int,
@@ -380,12 +360,10 @@ def recursive_print_proof(
         if not axiom:
             break
 
-
 def print_proof(clause_set):
     empty_clause = Clause("")
     idx = find_index_of_clause(empty_clause, clause_set)
     recursive_print_proof(idx, clause_set)
-
 
 def main():
     kb = init()
@@ -404,7 +382,6 @@ def main():
         print_proof(kb)
     else:
         print("Resolution proof failed")
-
 
 if __name__ == "__main__":
     main()
