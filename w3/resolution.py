@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 class Clause:
     """
     A class for clauses. A clause consists of a list of positive and negative symbols.
@@ -275,32 +273,6 @@ def init() -> list[Clause]:
 # It should not be necessary to change any code above this line!
 ##
 
-def resolving_clauses(clause1: Clause, clause2: Clause) -> Clause:
-    """Creates a clause that is a resolution of two clauses.
-
-    Args:
-        clause1 (Clause): First clause to resolve for
-        clause2 (Clause): Second clause to resolve for
-
-    Returns:
-        Clause: Resulting Clause
-    """
-
-    resolvent = Clause("")
-    for l in clause1.positive:
-        if l not in clause2.negative:
-            resolvent.positive.append(l)
-    for l in clause1.negative:
-        if l not in clause2.positive:
-            resolvent.negative.append(l)
-    for l in clause2.positive:
-        if l not in clause1.negative:
-            resolvent.positive.append(l)
-    for l in clause2.negative:
-        if l not in clause1.positive:
-            resolvent.negative.append(l)
-    return resolvent
-
 def print_proof_step(target: Clause, clause1: Clause, clause2: Clause) -> None:
     """Prints a proof step.
 
@@ -311,7 +283,7 @@ def print_proof_step(target: Clause, clause1: Clause, clause2: Clause) -> None:
     """
 
     target.print_clause()
-    print(" was proven by: ", end="")
+    print(" is inferred from: ", end="")
     clause1.print_clause()
     print(" and ", end="")
     clause2.print_clause()
@@ -343,7 +315,7 @@ def recursive_print_proof(
     while i >= 0:
         j = start_search_idx
         while j >= 0:
-            if resolving_clauses(clause_set[i], clause_set[j]).is_logicaly_equvivalent(
+            if can_resolve(clause_set[i], clause_set[j]) and resolve_clauses(clause_set[i], clause_set[j]).is_logicaly_equvivalent(
                 target
             ):
                 axiom = False
